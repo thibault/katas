@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>Test Cellular automaton</title>
+        <style>
+            form#control_form {
+                margin-bottom: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="main_canvas"> </canvas>
+        <script type="text/javascript" src="./automaton.js"></script>
+        <script type="text/javascript" src="./main.js"></script>
+
+        <script type="text/javascript">
+            var WIDTH = 800,
+                HEIGHT = 600,
+                CELL_WIDTH = 5,
+                canvas = document.getElementById('main_canvas'),
+                grid_width = parseInt(WIDTH / CELL_WIDTH),
+                grid_height = parseInt(HEIGHT / CELL_WIDTH);
+
+            var main_app = new app.App(grid_width, grid_height, canvas, CELL_WIDTH);
+            main_app.run();
+        </script>
+    </body>
+</html>
+
