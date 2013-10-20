@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>Test Cellular automaton</title>
+        <style>
+            form#control_form {
+                margin-bottom: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <form id="control_form">
+            <label for="rule_number">Rule :</label>
+            <input type="number" min="0" max="255" id="rule_number" value="110" /> <br />
+
+            <label for="mode_random">Random</label>
+            <input type="radio" name="mode" id="mode_random" value="random" />
+
+            <label for="mode_single">Single cell</label>
+            <input type="radio" name="mode" id="mode_single" value="single" checked="checked" /> <br />
+
+            <input type="submit" id="start_button" name="start" value="Start" />
+        </form>
+        <canvas id="main_canvas"> </canvas>
+        <script type="text/javascript" src="./automaton.js"></script>
+        <script type="text/javascript" src="./main.js"></script>
+    </body>
+</html>
