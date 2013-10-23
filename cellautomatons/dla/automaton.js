@@ -1,7 +1,11 @@
 var cellautomaton = (function() {
     "use strict";
 
-    var CONCENTRATION = 0.25;
+    var CONCENTRATION = 5;
+
+    var mod = function mod(n, m) {
+        return ((n % m) + m) % m;
+    }
 
     var CellularAutomaton = function(width, height) {
         this.width = width;
@@ -22,6 +26,10 @@ var cellautomaton = (function() {
         this.cells[this.width * y + x] = value;
     }
 
+    CellularAutomaton.prototype.indexAt = function(x, y) {
+        return this.width * y + x;
+    }
+
     /**
      * Initialize the grid with random values
      */
@@ -29,7 +37,7 @@ var cellautomaton = (function() {
         var random_val;
         for (var x = 0 ; x < this.width ; x++) {
             for (var y = 0 ; y < this.height ; y++) {
-                random_val = Math.floor(Math.random() * 4);
+                random_val = Math.floor(Math.random() * CONCENTRATION);
                 this.setValueAt(x, y, random_val == 1 ? 1 : 0);
             }
         }
@@ -37,35 +45,56 @@ var cellautomaton = (function() {
         this.setValueAt(this.width / 2, this.height / 2, 2);
     }
 
+    CellularAutomaton.prototype.isEmptyCell = function(x, y) {
+        return this.valueAt(x, y) == 0;
+    }
+
+    CellularAutomaton.prototype.isMovingCell = function(x, y) {
+        return this.valueAt(x, y) == 1;
+    }
+
+    CellularAutomaton.prototype.isStaticCell = function(x, y) {
+        return this.valueAt(x, y) == 2;
+    }
+
+    CellularAutomaton.prototype.hasStaticNeighbor = function(x, y) {
+        var real_i, real_j;
+
+        for (var i = x - 1 ; i <= x + 1 ; i++) {
+            for (var j = y - 1 ; j <= y + 1 ; j++) {
+                real_i = mod(i, this.width);
+                real_j = mod(j, this.height);
+                if (this.isStaticCell(real_i, real_j)) return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Apply the rule to move to the automaton's next step
      */
     CellularAutomaton.prototype.nextStep = function() {
-        // The slice() method without argument clones the array
         var nextStep = this.cells.slice();
+
+        for (var x = 0 ; x < this.width ; x++) {
+            for (var y = 0 ; y < this.height ; y++) {
+                if (this.isMovingCell(x, y)) {
+                    if (this.hasStaticNeighbor(x, y)) {
+                        nextStep[this.indexAt(x, y)] = 2;
+                    } else {
+                        var x_delta = Math.floor(Math.random() * 3) - 1;
+                        var new_x = mod(x + x_delta, this.width);
+                        var y_delta = Math.floor(Math.random() * 3) - 1;
+                        var new_y = mod(y + y_delta, this.height);
+                        if (nextStep[this.indexAt(new_x, new_y)] == 0) {
+                            nextStep[this.indexAt(new_x, new_y)] = 1;
+                            nextStep[this.indexAt(x, y)] = 0;
+                        }
+                    }
+                }
+            }
+        }
         this.cells = nextStep;
-    }
-
-    /**
-     * Get the next step value for given cell index
-     */
-    CellularAutomaton.prototype.getNextStepValue = function(index) {
-        var left_index = index - 1;
-        if (left_index < 0) {
-            left_index = this.width - 1;
-        }
-
-        var right_index = index + 1;
-        if (right_index >= this.width) {
-            right_index = 0;
-        }
-
-        var key = [
-            this.cells[left_index],
-            this.cells[index],
-            this.cells[right_index]
-        ].join('');
-        return this.rule[key];
     }
 
     /**

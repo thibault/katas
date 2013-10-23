@@ -33,7 +33,7 @@ var app = (function(cellautomaton) {
         this.automaton_interval = setInterval(function(automaton, canvas, cell_width) {
             automaton.drawOn(canvas, cell_width);
             automaton.nextStep();
-        }, 100, this.automaton, this.canvas, this.cell_width);
+        }, 50, this.automaton, this.canvas, this.cell_width);
     }
 
     return {
