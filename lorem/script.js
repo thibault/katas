@@ -26,12 +26,20 @@ Aenean suscipit nulla in justo. Suspendisse cursus rutrum augue. Nulla\
 tincidunt tincidunt mi. Curabitur iaculis, lorem vel rhoncus faucibus, felis\
 magna fermentum augue, et ultricies lacus lorem varius purus. Curabitur eu\
 amet."
-var paragraphs = 5;
-var words = 25;
-var total_length = lorem.length;
+var words = lorem.split(' ');
+
+var nb_paragraphs = 5;
+var nb_words = 25;
+
+var data = [];
+
+for (var i = 0 ; i < nb_paragraphs ; i++) {
+    var start = i * nb_words;
+    data.push(words.slice(start, start + nb_words));
+}
 
 d3.select('#text').selectAll('p')
-    .data(lorem, function(d) { console.log(d); return d })
+    .data(data)
   .enter()
     .append('p')
-    .text('toto');
+    .text(function (d) { return d.join(' ') });
