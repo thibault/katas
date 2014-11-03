@@ -34,7 +34,7 @@ var app = (function(cellautomaton) {
             app.automaton.drawOn(app.canvas, app.cell_width);
             app.automaton.nextStep();
             if (app.automaton.isFinished()) {
-                clearInterval(app.automaton_interval);
+                app.automaton.init();
             }
         }, 50, this);
     }
