@@ -20,8 +20,12 @@
         this.ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_WIDTH / ratio);
 
         this.hues = this.extractHues();
+        this.pixels = new Array(this.canvas.width);
     };
 
+    /**
+     * Extract all hues for the image.
+     */
     App.prototype.extractHues = function() {
         var hues = new Array(this.canvas.width * this.canvas.height);
         var data;
@@ -54,11 +58,9 @@
             var random_x = Math.floor(Math.random() * this.canvas.width);
             var random_y = Math.floor(Math.random() * this.canvas.height);
             var hue = this.hues[random_x * this.canvas.width + random_y];
-
             return {x: random_x, y: random_y, color: hue};
         }, this);
 
-        this.pixels = new Array(this.canvas.width);
 
         this.iterate();
     };
@@ -106,11 +108,15 @@
     App.prototype.getClosestMean = function(x, y) {
         var closest_mean = -1;
         var closest_distance = this.canvas.width * this.canvas.height;
+        var hue = this.hues[x * this.canvas.width + y];
 
         for (var i = 0 ; i < this.means.length ; i++) {
-            var delta_x = this.means[i].x - x;
-            var delta_y = this.means[i].y - y;
-            var distance = Math.pow(delta_x, 2) + Math.pow(delta_y, 2);
+            var mean = this.means[i];
+
+            var delta_x = mean.x - x;
+            var delta_y = mean.y - y;
+            var delta_hue = mean.color - hue;
+            var distance = Math.pow(delta_x, 2) + Math.pow(delta_y, 2) + Math.pow(delta_hue, 2);
 
             if (distance < closest_distance) {
                 closest_mean = i;
