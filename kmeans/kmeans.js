@@ -141,7 +141,7 @@
 
     img.addEventListener('load', function(evt) {
         app.displayImage(img);
-        app.clusterize(8, 10);
+        app.clusterize(15, 10);
     });
 
 })(this);
