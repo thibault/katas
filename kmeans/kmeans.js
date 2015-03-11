@@ -1,7 +1,7 @@
 (function(exports) {
     "use strict";
 
-    var CANVAS_WIDTH = 800;
+    var CANVAS_WIDTH = 500;
 
     var App = function(canvas) {
         this.canvas = canvas;
@@ -18,26 +18,42 @@
         this.canvas.height = CANVAS_WIDTH / ratio;
 
         this.ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_WIDTH / ratio);
+
+        this.hues = this.extractHues();
+    };
+
+    App.prototype.extractHues = function() {
+        var hues = new Array(this.canvas.width * this.canvas.height);
+        var data;
+        var r, g, b;
+        var hsl, hue;
+
+        data = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
+        for (var x = 0 ; x < this.canvas.width ; x++) {
+            for (var y = 0 ; y < this.canvas.height ; y++) {
+                var index = (y * this.canvas.width + x) * 4;
+                r = data[index];
+                g = data[index + 1];
+                b = data[index + 2];
+                hsl = Utils.rgbToHsl(r, g, b);
+                hue = hsl.h * 360;
+                hues[x * this.canvas.width + y] = hue;
+            }
+        }
+
+        return hues;
     };
 
     /**
      * Separate the image into k clusters using n iterations
      */
     App.prototype.clusterize = function(k, n) {
-        var r, g, b;
-        var hsl, hue;
 
         // Initialize random means
         this.means = (Array.apply(null, new Array(k))).map(function() {
             var random_x = Math.floor(Math.random() * this.canvas.width);
             var random_y = Math.floor(Math.random() * this.canvas.height);
-
-            var pixel_data = this.ctx.getImageData(random_x, random_y, 1, 1).data;
-            r = pixel_data[0];
-            g = pixel_data[1];
-            b = pixel_data[2];
-            hsl = Utils.rgbToHsl(r, g, b);
-            hue = hsl.h * 360;
+            var hue = this.hues[random_x * this.canvas.width + random_y];
 
             return {x: random_x, y: random_y, color: hue};
         }, this);
@@ -94,7 +110,7 @@
         for (var i = 0 ; i < this.means.length ; i++) {
             var delta_x = this.means[i].x - x;
             var delta_y = this.means[i].y - y;
-            var distance = Math.sqrt(Math.pow(delta_x, 2) + Math.pow(delta_y, 2));
+            var distance = Math.pow(delta_x, 2) + Math.pow(delta_y, 2);
 
             if (distance < closest_distance) {
                 closest_mean = i;
@@ -119,7 +135,7 @@
 
     img.addEventListener('load', function(evt) {
         app.displayImage(img);
-        app.clusterize(5, 10);
+        app.clusterize(8, 10);
     });
 
 })(this);
