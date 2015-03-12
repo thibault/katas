@@ -163,8 +163,8 @@
             var delta_saturation = mean.saturation - saturation;
             var delta_luminosity = mean.luminosity - luminosity;
             var distance = [
-                //2 * Math.pow(delta_x, 2),
-                //2 * Math.pow(delta_y, 2),
+                //Math.pow(delta_x, 2),
+                //Math.pow(delta_y, 2),
                 2 * Math.pow(delta_hue, 2),
                 Math.pow(delta_saturation, 2),
                 Math.pow(delta_luminosity, 2)
