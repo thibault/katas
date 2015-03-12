@@ -19,18 +19,21 @@
 
         this.ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_WIDTH / ratio);
 
-        this.hues = this.extractHues();
+        this.extractColors();
         this.pixels = new Array(this.canvas.width);
     };
 
     /**
      * Extract all hues for the image.
      */
-    App.prototype.extractHues = function() {
-        var hues = new Array(this.canvas.width * this.canvas.height);
+    App.prototype.extractColors = function() {
         var data;
         var r, g, b;
         var hsl, hue;
+
+        this.hues = new Array(this.canvas.width * this.canvas.height);
+        this.saturations = new Array(this.canvas.width * this.canvas.height);
+        this.luminosities = new Array(this.canvas.width * this.canvas.height);
 
         data = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
         for (var x = 0 ; x < this.canvas.width ; x++) {
@@ -41,11 +44,11 @@
                 b = data[index + 2];
                 hsl = Utils.rgbToHsl(r, g, b);
                 hue = hsl.h * 360;
-                hues[x * this.canvas.width + y] = hue;
+                this.hues[x * this.canvas.width + y] = hue;
+                this.saturations[x * this.canvas.width + y] = hsl.s;
+                this.luminosities[x * this.canvas.width + y] = hsl.l;
             }
         }
-
-        return hues;
     };
 
     /**
@@ -58,14 +61,20 @@
             var random_x = Math.floor(Math.random() * this.canvas.width);
             var random_y = Math.floor(Math.random() * this.canvas.height);
             var hue = this.hues[random_x * this.canvas.width + random_y];
+            var saturation = this.saturations[random_x * this.canvas.width + random_y];
+            var luminosity = this.luminosities[random_x * this.canvas.width + random_y];
             return {
                 x: random_x,
                 y: random_y,
                 hue: hue,
+                saturation: saturation,
+                luminosity: luminosity,
                 nb_pixels: 0,
                 total_x: 0,
                 total_y: 0,
-                total_hue: 0
+                total_hue: 0,
+                total_saturation: 0,
+                total_luminosity: 0
             };
         }, this);
 
@@ -109,6 +118,8 @@
                 this.means[mean].total_x += x;
                 this.means[mean].total_y += y;
                 this.means[mean].total_hue += this.hues[x * this.canvas.width + y];
+                this.means[mean].total_saturation += this.saturations[x * this.canvas.width + y];
+                this.means[mean].total_luminosity += this.luminosities[x * this.canvas.width + y];
 
             }
         }
@@ -119,7 +130,7 @@
         for (var x = 0 ; x < this.canvas.width ; x++) {
             for (var y = 0 ; y < this.canvas.height ; y++) {
                 mean = this.means[this.pixels[x][y]];
-                this.ctx.fillStyle = 'hsl(' + mean.hue + ', 100%, 50%)';
+                this.ctx.fillStyle = 'hsl(' + mean.hue + ',' + mean.saturation' + %,' + mean.luminosity + '%)';
                 this.ctx.fillRect(x, y, 1, 1);
             }
         }
@@ -154,10 +165,14 @@
             mean.x = mean.total_x / mean.nb_pixels;
             mean.y = mean.total_y / mean.nb_pixels;
             mean.hue = mean.total_hue / mean.nb_pixels;
+            mean.saturation = mean.total_saturation / mean.nb_pixels;
+            mean.luminosity = mean.total_luminosity / mean.nb_pixels;
             mean.nb_pixels = 0;
             mean.total_x = 0;
             mean.total_y = 0;
             mean.total_hue = 0;
+            mean.total_saturation = 0;
+            mean.total_luminosity = 0;
             return mean;
         }, this);
     };
