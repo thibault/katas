@@ -9,7 +9,16 @@
 <body>
     <canvas id="canvas"></canvas>
     <form id="image-form" method="post" action="#">
-        <input type="input" id="image-input" value="https://farm8.staticflickr.com/7627/16763808031_3939774039_c.jpg" />
+
+        <label for="image-input">Url de l'image</label>
+        <input type="input" id="image-input" value="http://farm8.staticflickr.com/7627/16763808031_3939774039_c.jpg" /> <br />
+
+        <label for="k">Nombre de zones</label>
+        <input type="number" name="k" id="k" value="8" /> <br />
+
+        <label for="n">Nombre d'itérations</label>
+        <input type="number" name="n" id="n" value="10" /> <br />
+
         <input type="submit" value="Go baby!" />
     </form>
 

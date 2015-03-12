@@ -163,9 +163,9 @@
             var delta_saturation = mean.saturation - saturation;
             var delta_luminosity = mean.luminosity - luminosity;
             var distance = [
-                2 * Math.pow(delta_x, 2),
-                2 * Math.pow(delta_y, 2),
-                3 * Math.pow(delta_hue, 2),
+                //2 * Math.pow(delta_x, 2),
+                //2 * Math.pow(delta_y, 2),
+                2 * Math.pow(delta_hue, 2),
                 Math.pow(delta_saturation, 2),
                 Math.pow(delta_luminosity, 2)
             ].reduce(function(a, b) {
@@ -202,18 +202,21 @@
     var form = document.getElementById('image-form');
     var next_btn = document.getElementById('next-button');
     var image_input = document.getElementById('image-input');
+    var k_input = document.getElementById('k');
+    var n_input = document.getElementById('n');
     var img = new Image();
+    img.crossOrigin = '';
     var app = new App(canvas);
 
     form.addEventListener('submit', function(evt) {
         evt.preventDefault();
-        img.crossOrigin = '';
         img.src = image_input.value;
     });
 
     img.addEventListener('load', function(evt) {
         app.displayImage(img);
-        app.clusterize(16, 10);
+        app.clusterize(k.value, n.value);
     });
+
 
 })(this);
