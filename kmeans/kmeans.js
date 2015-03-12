@@ -216,9 +216,4 @@
         app.clusterize(16, 10);
     });
 
-    next_btn.addEventListener('click', function(evt) {
-        evt.preventDefault();
-        app.iterate();
-    });
-
 })(this);
