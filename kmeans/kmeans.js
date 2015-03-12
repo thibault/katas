@@ -130,7 +130,7 @@
         for (var x = 0 ; x < this.canvas.width ; x++) {
             for (var y = 0 ; y < this.canvas.height ; y++) {
                 mean = this.means[this.pixels[x][y]];
-                this.ctx.fillStyle = 'hsl(' + mean.hue + ',' + mean.saturation' + %,' + mean.luminosity + '%)';
+                this.ctx.fillStyle = 'hsl(' + mean.hue + ',' + mean.saturation + '%,' + mean.luminosity + '%)';
                 this.ctx.fillRect(x, y, 1, 1);
             }
         }
