@@ -140,8 +140,10 @@
      */
     App.prototype.getClosestMean = function(x, y) {
         var closest_mean = -1;
-        var closest_distance = this.canvas.width * this.canvas.height;
+        var closest_distance = Infinity;
         var hue = this.hues[x * this.canvas.width + y];
+        var saturation = this.saturations[x * this.canvas.width + y];
+        var luminosity = this.luminosities[x * this.canvas.width + y];
 
         for (var i = 0 ; i < this.means.length ; i++) {
             var mean = this.means[i];
@@ -149,7 +151,17 @@
             var delta_x = mean.x - x;
             var delta_y = mean.y - y;
             var delta_hue = mean.hue - hue;
-            var distance = Math.pow(delta_x, 2) + Math.pow(delta_y, 2) + Math.pow(delta_hue, 2);
+            var delta_saturation = mean.saturation - saturation;
+            var delta_luminosity = mean.luminosity - luminosity;
+            var distance = [
+                2 * Math.pow(delta_x, 2),
+                2 * Math.pow(delta_y, 2),
+                3 * Math.pow(delta_hue, 2),
+                Math.pow(delta_saturation, 2),
+                Math.pow(delta_luminosity, 2)
+            ].reduce(function(a, b) {
+                return a + b;
+            });
 
             if (distance < closest_distance) {
                 closest_mean = i;
