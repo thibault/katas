@@ -29,7 +29,7 @@
     App.prototype.extractColors = function() {
         var data;
         var r, g, b;
-        var hsl, hue;
+        var hsl;
 
         this.hues = new Array(this.canvas.width * this.canvas.height);
         this.saturations = new Array(this.canvas.width * this.canvas.height);
@@ -43,10 +43,9 @@
                 g = data[index + 1];
                 b = data[index + 2];
                 hsl = Utils.rgbToHsl(r, g, b);
-                hue = hsl.h * 360;
-                this.hues[x * this.canvas.width + y] = hue;
-                this.saturations[x * this.canvas.width + y] = hsl.s;
-                this.luminosities[x * this.canvas.width + y] = hsl.l;
+                this.hues[x * this.canvas.width + y] = hsl.h * 360;
+                this.saturations[x * this.canvas.width + y] = hsl.s * 100;
+                this.luminosities[x * this.canvas.width + y] = hsl.l * 100;
             }
         }
     };
@@ -193,7 +192,7 @@
 
     img.addEventListener('load', function(evt) {
         app.displayImage(img);
-        app.clusterize(128, 5);
+        app.clusterize(16, 5);
     });
 
     next_btn.addEventListener('click', function(evt) {
