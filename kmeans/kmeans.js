@@ -204,18 +204,18 @@
     var image_input = document.getElementById('image-input');
     var k_input = document.getElementById('k');
     var n_input = document.getElementById('n');
+    var app = new App(canvas);
     var img = new Image();
     img.crossOrigin = '';
-    var app = new App(canvas);
+
+    img.onload = function() {
+        app.displayImage(img);
+        app.clusterize(+k.value, +n.value);
+    };
 
     form.addEventListener('submit', function(evt) {
         evt.preventDefault();
-        img.src = image_input.value;
-    });
-
-    img.addEventListener('load', function(evt) {
-        app.displayImage(img);
-        app.clusterize(+k.value, +n.value);
+        img.src = image_input.value + '?uncache=' + (new Date()).getTime();
     });
 
 
