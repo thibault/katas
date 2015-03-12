@@ -74,6 +74,7 @@
 
     App.prototype.iterate = function() {
         this.affectPixelsToClusters();
+        this.drawClusters();
         this.updateMeans();
     };
 
@@ -104,13 +105,21 @@
                 mean = this.getClosestMean(x, y);
                 this.pixels[x][y] = mean;
 
-
                 this.means[mean].nb_pixels++;
                 this.means[mean].total_x += x;
                 this.means[mean].total_y += y;
                 this.means[mean].total_hue += this.hues[x * this.canvas.width + y];
 
-                this.ctx.fillStyle = 'hsl(' + this.means[mean].hue + ', 100%, 50%)';
+            }
+        }
+    };
+
+    App.prototype.drawClusters = function() {
+        var mean;
+        for (var x = 0 ; x < this.canvas.width ; x++) {
+            for (var y = 0 ; y < this.canvas.height ; y++) {
+                mean = this.means[this.pixels[x][y]];
+                this.ctx.fillStyle = 'hsl(' + mean.hue + ', 100%, 50%)';
                 this.ctx.fillRect(x, y, 1, 1);
             }
         }
