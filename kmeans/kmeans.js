@@ -77,13 +77,22 @@
             };
         }, this);
 
-        this.iterate();
+        this.iterationCounter = n;
+        var that = this;
+        this.intervalId = setInterval(function() {
+            that.iterate();
+        }, 1000);
     };
 
     App.prototype.iterate = function() {
         this.affectPixelsToClusters();
         this.drawClusters();
         this.updateMeans();
+
+        this.iterationCounter--;
+        if (this.iterationCounter <= 0) {
+            clearInterval(this.intervalId);
+        }
     };
 
     /**
@@ -204,7 +213,7 @@
 
     img.addEventListener('load', function(evt) {
         app.displayImage(img);
-        app.clusterize(16, 5);
+        app.clusterize(16, 10);
     });
 
     next_btn.addEventListener('click', function(evt) {
