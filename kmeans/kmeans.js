@@ -215,7 +215,7 @@
 
     img.addEventListener('load', function(evt) {
         app.displayImage(img);
-        app.clusterize(k.value, n.value);
+        app.clusterize(+k.value, +n.value);
     });
 
 
