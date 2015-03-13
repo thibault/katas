@@ -1,7 +1,7 @@
 (function(exports) {
     "use strict";
 
-    var CANVAS_WIDTH = 400;
+    var CANVAS_WIDTH = 500;
 
     var App = function(canvas) {
         this.canvas = canvas;
@@ -30,6 +30,7 @@
         var data;
         var r, g, b;
         var hsl;
+        var index;
 
         this.hues = new Array(this.canvas.width * this.canvas.height);
         this.saturations = new Array(this.canvas.width * this.canvas.height);
@@ -38,14 +39,14 @@
         data = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
         for (var x = 0 ; x < this.canvas.width ; x++) {
             for (var y = 0 ; y < this.canvas.height ; y++) {
-                var index = (y * this.canvas.width + x) * 4;
+                index = (y * this.canvas.width + x) * 4;
                 r = data[index];
                 g = data[index + 1];
                 b = data[index + 2];
                 hsl = Utils.rgbToHsl(r, g, b);
-                this.hues[x * this.canvas.width + y] = hsl.h * 360;
-                this.saturations[x * this.canvas.width + y] = hsl.s * 100;
-                this.luminosities[x * this.canvas.width + y] = hsl.l * 100;
+                this.hues[x * this.canvas.width + y] = hsl[0] * 360.0;
+                this.saturations[x * this.canvas.width + y] = hsl[1] * 100.0;
+                this.luminosities[x * this.canvas.width + y] = hsl[2] * 100.0;
             }
         }
     };
@@ -54,14 +55,15 @@
      * Separate the image into k clusters using n iterations
      */
     App.prototype.clusterize = function(k, n) {
+        var random_x, random_y, hue, saturation, luminosity;
 
         // Initialize random means
         this.means = (Array.apply(null, new Array(k))).map(function() {
-            var random_x = Math.floor(Math.random() * this.canvas.width);
-            var random_y = Math.floor(Math.random() * this.canvas.height);
-            var hue = this.hues[random_x * this.canvas.width + random_y];
-            var saturation = this.saturations[random_x * this.canvas.width + random_y];
-            var luminosity = this.luminosities[random_x * this.canvas.width + random_y];
+            random_x = Math.floor(Math.random() * this.canvas.width);
+            random_y = Math.floor(Math.random() * this.canvas.height);
+            hue = this.hues[random_x * this.canvas.width + random_y];
+            saturation = this.saturations[random_x * this.canvas.width + random_y];
+            luminosity = this.luminosities[random_x * this.canvas.width + random_y];
             return {
                 x: random_x,
                 y: random_y,
@@ -135,20 +137,31 @@
     };
 
     App.prototype.drawClusters = function() {
-        var mean;
+        var mean, rgb, index;
+        var imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
         for (var x = 0 ; x < this.canvas.width ; x++) {
             for (var y = 0 ; y < this.canvas.height ; y++) {
                 mean = this.means[this.pixels[x][y]];
-                this.ctx.fillStyle = 'hsl(' + mean.hue + ',' + mean.saturation + '%,' + mean.luminosity + '%)';
-                this.ctx.fillRect(x, y, 1, 1);
+                rgb = Utils.hslToRgb(mean.hue / 360.0, mean.saturation / 100.0, mean.luminosity / 100.0);
+                index = (x + y * this.canvas.width) * 4;
+                imageData.data[index] = rgb[0];
+                imageData.data[index + 1] = rgb[1];
+                imageData.data[index + 2] = rgb[2];
+                imageData.data[index + 3] = 255;
             }
         }
+
+        this.ctx.putImageData(imageData, 0, 0);
     };
 
     /**
      * get the closest mean for the given coordinates
      */
     App.prototype.getClosestMean = function(x, y) {
+        var delta_x, delta_y, delta_hue, delta_saturation, delta_luminosity;
+        var distance;
+
         var closest_mean = -1;
         var closest_distance = Infinity;
         var hue = this.hues[x * this.canvas.width + y];
@@ -158,12 +171,12 @@
         for (var i = 0 ; i < this.means.length ; i++) {
             var mean = this.means[i];
 
-            var delta_x = mean.x - x;
-            var delta_y = mean.y - y;
-            var delta_hue = mean.hue - hue;
-            var delta_saturation = mean.saturation - saturation;
-            var delta_luminosity = mean.luminosity - luminosity;
-            var distance = [
+            delta_x = mean.x - x;
+            delta_y = mean.y - y;
+            delta_hue = mean.hue - hue;
+            delta_saturation = mean.saturation - saturation;
+            delta_luminosity = mean.luminosity - luminosity;
+            distance = [
                 //Math.pow(delta_x, 2),
                 //Math.pow(delta_y, 2),
                 3 * Math.pow(delta_hue, 2),
