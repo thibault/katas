@@ -80,11 +80,11 @@
         }, this);
         this.drawMeans();
 
-        //this.iterationCounter = n;
-        //var that = this;
-        //this.intervalId = setInterval(function() {
-        //    that.iterate();
-        //}, 1000);
+        this.iterationCounter = n;
+        var that = this;
+        this.intervalId = setInterval(function() {
+            that.iterate();
+        }, 750);
     };
 
     App.prototype.iterate = function() {
@@ -92,10 +92,10 @@
         this.drawClusters();
         this.updateMeans();
 
-        //this.iterationCounter--;
-        //if (this.iterationCounter <= 0) {
-        //    clearInterval(this.intervalId);
-        //}
+        this.iterationCounter--;
+        if (this.iterationCounter <= 0) {
+            clearInterval(this.intervalId);
+        }
     };
 
     /**
