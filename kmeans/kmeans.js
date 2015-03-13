@@ -166,8 +166,8 @@
             var distance = [
                 //Math.pow(delta_x, 2),
                 //Math.pow(delta_y, 2),
-                2 * Math.pow(delta_hue, 2),
-                Math.pow(delta_saturation, 2),
+                3 * Math.pow(delta_hue, 2),
+                2 * Math.pow(delta_saturation, 2),
                 Math.pow(delta_luminosity, 2)
             ].reduce(function(a, b) {
                 return a + b;
