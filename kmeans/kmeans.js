@@ -1,7 +1,7 @@
 (function(exports) {
     "use strict";
 
-    var CANVAS_WIDTH = 500;
+    var CANVAS_WIDTH = 400;
 
     var App = function(canvas) {
         this.canvas = canvas;
@@ -102,7 +102,7 @@
         this.means.map(function(mean) {
             this.ctx.fillStyle = 'hsl(' + mean.hue + ', 100%, 50%)';
             this.ctx.beginPath();
-            this.ctx.arc(mean.x, mean.y, 5, 0, 360);
+            this.ctx.arc(mean.x, mean.y, 3, 0, 360);
             this.ctx.fill();
         }, this);
     };
