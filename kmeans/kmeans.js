@@ -76,12 +76,13 @@
                 total_luminosity: 0
             };
         }, this);
+        this.drawMeans();
 
-        this.iterationCounter = n;
-        var that = this;
-        this.intervalId = setInterval(function() {
-            that.iterate();
-        }, 1000);
+        //this.iterationCounter = n;
+        //var that = this;
+        //this.intervalId = setInterval(function() {
+        //    that.iterate();
+        //}, 1000);
     };
 
     App.prototype.iterate = function() {
@@ -89,10 +90,10 @@
         this.drawClusters();
         this.updateMeans();
 
-        this.iterationCounter--;
-        if (this.iterationCounter <= 0) {
-            clearInterval(this.intervalId);
-        }
+        //this.iterationCounter--;
+        //if (this.iterationCounter <= 0) {
+        //    clearInterval(this.intervalId);
+        //}
     };
 
     /**
@@ -200,7 +201,7 @@
 
     var canvas = document.getElementById('canvas');
     var form = document.getElementById('image-form');
-    var next_btn = document.getElementById('next-button');
+    var next_btn = document.getElementById('next');
     var image_input = document.getElementById('image-input');
     var k_input = document.getElementById('k');
     var n_input = document.getElementById('n');
@@ -208,15 +209,18 @@
     var img = new Image();
     img.crossOrigin = '';
 
-    img.onload = function() {
+    img.addEventListener('load', function(evt) {
         app.displayImage(img);
         app.clusterize(+k.value, +n.value);
-    };
+    });
 
     form.addEventListener('submit', function(evt) {
         evt.preventDefault();
         img.src = image_input.value + '?uncache=' + (new Date()).getTime();
     });
 
-
+    next_btn.addEventListener('click', function(evt) {
+        evt.preventDefault();
+        app.iterate();
+    });
 })(this);
